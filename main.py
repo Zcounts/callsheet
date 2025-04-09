@@ -13,7 +13,7 @@ REQUIRED_PACKAGES = [
 
 def check_dependencies():
     """
-    Check if required packages are installed
+    Check if required packages are installed and install them if missing
     """
     missing_packages = []
     
@@ -23,13 +23,53 @@ def check_dependencies():
     
     if missing_packages:
         packages_str = ", ".join(missing_packages)
-        messagebox.showerror(
+        install_response = messagebox.askyesno(
             "Missing Dependencies",
             f"The following required packages are missing: {packages_str}\n\n"
-            f"Please install them using pip:\n"
-            f"pip install {' '.join(missing_packages)}"
+            f"Would you like to automatically install them now?\n"
+            f"(This may take a moment)"
         )
-        return False
+        
+        if install_response:
+            try:
+                import subprocess
+                import sys
+                
+                # Create a simple progress window
+                progress_window = tk.Toplevel()
+                progress_window.title("Installing Dependencies")
+                progress_window.geometry("300x100")
+                
+                # Add progress message
+                tk.Label(progress_window, text=f"Installing: {packages_str}...").pack(pady=10)
+                progress = ttk.Progressbar(progress_window, mode="indeterminate")
+                progress.pack(fill=tk.X, padx=20, pady=10)
+                progress.start()
+                progress_window.update()
+                
+                # Install packages using pip
+                subprocess.check_call([sys.executable, "-m", "pip", "install", *missing_packages])
+                
+                # Close progress window
+                progress_window.destroy()
+                
+                messagebox.showinfo("Installation Complete", "Required packages were successfully installed.")
+                return True
+            except Exception as e:
+                messagebox.showerror(
+                    "Installation Failed",
+                    f"Failed to install dependencies: {str(e)}\n\n"
+                    f"Please install them manually using pip:\n"
+                    f"pip install {' '.join(missing_packages)}"
+                )
+                return False
+        else:
+            messagebox.showinfo(
+                "Installation Required",
+                f"Please install the missing packages manually before running the application:\n"
+                f"pip install {' '.join(missing_packages)}"
+            )
+            return False
     
     return True
 
