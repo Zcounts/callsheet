@@ -11,67 +11,25 @@ REQUIRED_PACKAGES = [
     "pillow"
 ]
 
+# Replace the check_dependencies function in main.py with this:
 def check_dependencies():
     """
-    Check if required packages are installed and install them if missing
+    Check if required packages are installed and warn if missing
     """
-    missing_packages = []
-    
-    for package in REQUIRED_PACKAGES:
-        if importlib.util.find_spec(package) is None:
-            missing_packages.append(package)
-    
-    if missing_packages:
-        packages_str = ", ".join(missing_packages)
-        install_response = messagebox.askyesno(
+    try:
+        # Try to import the packages directly, which is more reliable
+        import reportlab
+        import PIL  # Pillow will be available as PIL
+        return True
+    except ImportError as e:
+        missing_package = str(e).split("'")[-2]
+        messagebox.showerror(
             "Missing Dependencies",
-            f"The following required packages are missing: {packages_str}\n\n"
-            f"Would you like to automatically install them now?\n"
-            f"(This may take a moment)"
+            f"The required package '{missing_package}' is missing.\n\n"
+            f"Please install it manually using pip:\n"
+            f"pip install {missing_package}"
         )
-        
-        if install_response:
-            try:
-                import subprocess
-                import sys
-                
-                # Create a simple progress window
-                progress_window = tk.Toplevel()
-                progress_window.title("Installing Dependencies")
-                progress_window.geometry("300x100")
-                
-                # Add progress message
-                tk.Label(progress_window, text=f"Installing: {packages_str}...").pack(pady=10)
-                progress = ttk.Progressbar(progress_window, mode="indeterminate")
-                progress.pack(fill=tk.X, padx=20, pady=10)
-                progress.start()
-                progress_window.update()
-                
-                # Install packages using pip
-                subprocess.check_call([sys.executable, "-m", "pip", "install", *missing_packages])
-                
-                # Close progress window
-                progress_window.destroy()
-                
-                messagebox.showinfo("Installation Complete", "Required packages were successfully installed.")
-                return True
-            except Exception as e:
-                messagebox.showerror(
-                    "Installation Failed",
-                    f"Failed to install dependencies: {str(e)}\n\n"
-                    f"Please install them manually using pip:\n"
-                    f"pip install {' '.join(missing_packages)}"
-                )
-                return False
-        else:
-            messagebox.showinfo(
-                "Installation Required",
-                f"Please install the missing packages manually before running the application:\n"
-                f"pip install {' '.join(missing_packages)}"
-            )
-            return False
-    
-    return True
+        return False
 
 def main():
     """
