@@ -83,8 +83,16 @@ def save_call_sheet(call_sheet: CallSheet, filename: str) -> bool:
 def load_call_sheet(filename: str) -> Optional[CallSheet]:
     """Load a call sheet from a JSON file"""
     try:
+        # Check if filename is a full path or just a filename
+        if os.path.dirname(filename):
+            # It's a full path
+            filepath = filename
+        else:
+            # It's just a filename
+            filepath = os.path.join(DATA_DIR, filename)
+        
         # Load from JSON file
-        with open(os.path.join(DATA_DIR, filename), "r") as f:
+        with open(filepath, "r") as f:
             call_sheet_dict = json.load(f)
         
         # Create call sheet object
