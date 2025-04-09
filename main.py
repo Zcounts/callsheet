@@ -5,6 +5,9 @@ import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import importlib.util
 
+# Add the directory containing this script to the Python path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 # List of required packages
 REQUIRED_PACKAGES = [
     "reportlab",
