@@ -6,6 +6,10 @@ from typing import Dict, Any, Optional, List
 
 from models import CallSheet, Location, CastMember, CrewMember
 
+# Get the directory where this script is located
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, "data")
+
 def time_to_str(t: time) -> str:
     """Convert time object to string for JSON serialization"""
     return t.strftime("%H:%M")
@@ -27,7 +31,7 @@ def save_call_sheet(call_sheet: CallSheet, filename: str) -> bool:
     """Save a call sheet to a JSON file"""
     try:
         # Create data directory if it doesn't exist
-        os.makedirs("data", exist_ok=True)
+        os.makedirs(DATA_DIR, exist_ok=True)
         
         # Convert call sheet to dictionary
         call_sheet_dict = {
@@ -68,7 +72,7 @@ def save_call_sheet(call_sheet: CallSheet, filename: str) -> bool:
         }
         
         # Save to JSON file
-        with open(os.path.join("data", filename), "w") as f:
+        with open(os.path.join(DATA_DIR, filename), "w") as f:
             json.dump(call_sheet_dict, f, indent=4)
         
         return True
@@ -80,7 +84,7 @@ def load_call_sheet(filename: str) -> Optional[CallSheet]:
     """Load a call sheet from a JSON file"""
     try:
         # Load from JSON file
-        with open(os.path.join("data", filename), "r") as f:
+        with open(os.path.join(DATA_DIR, filename), "r") as f:
             call_sheet_dict = json.load(f)
         
         # Create call sheet object
@@ -136,10 +140,10 @@ def list_saved_call_sheets() -> List[str]:
     """List all saved call sheets"""
     try:
         # Create data directory if it doesn't exist
-        os.makedirs("data", exist_ok=True)
+        os.makedirs(DATA_DIR, exist_ok=True)
         
         # List all JSON files in data directory
-        return [f for f in os.listdir("data") if f.endswith(".json")]
+        return [f for f in os.listdir(DATA_DIR) if f.endswith(".json")]
     except Exception as e:
         print(f"Error listing call sheets: {e}")
         return []
