@@ -35,37 +35,22 @@ def generate_call_sheet_pdf(call_sheet: CallSheet, output_path: str) -> bool:
         # Get styles
         styles = getSampleStyleSheet()
         
-        # Create custom styles
-        styles.add(ParagraphStyle(
-            name='Title',
-            parent=styles['Heading1'],
-            fontSize=16,
-            spaceAfter=12
-        ))
+        # Modify existing styles instead of creating new ones with the same name
+        styles['Title'].fontSize = 16
+        styles['Title'].spaceAfter = 12
         
-        styles.add(ParagraphStyle(
-            name='Heading2',
-            parent=styles['Heading2'],
-            fontSize=14,
-            spaceAfter=6
-        ))
+        styles['Heading2'].fontSize = 14
+        styles['Heading2'].spaceAfter = 6
         
-        styles.add(ParagraphStyle(
-            name='Heading3',
-            parent=styles['Heading3'],
-            fontSize=12,
-            spaceAfter=6
-        ))
+        styles['Heading3'].fontSize = 12
+        styles['Heading3'].spaceAfter = 6
         
-        styles.add(ParagraphStyle(
-            name='Normal',
-            parent=styles['Normal'],
-            fontSize=10,
-            spaceAfter=6
-        ))
+        styles['Normal'].fontSize = 10
+        styles['Normal'].spaceAfter = 6
         
+        # Add new styles with unique names
         styles.add(ParagraphStyle(
-            name='Bold',
+            name='BoldText',  # Changed from 'Bold' to avoid potential conflicts
             parent=styles['Normal'],
             fontName='Helvetica-Bold',
             fontSize=10
